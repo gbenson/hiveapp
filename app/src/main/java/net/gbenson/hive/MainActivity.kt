@@ -1,5 +1,6 @@
 package net.gbenson.hive
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,11 +16,25 @@ import net.gbenson.hive.ui.theme.HiveTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        var shareText = ""
+
+        // https://developer.android.com/training/sharing/receive#kotlin
+        when {
+            intent?.action == Intent.ACTION_SEND -> {
+                if ("text/plain" == intent.type) {
+                    intent.getStringExtra(Intent.EXTRA_TEXT)?.let {
+                        shareText = it
+                    }
+                }
+            }
+        }
+
         setContent {
             HiveTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+                    Greeting(shareText)
                 }
             }
         }
@@ -27,8 +42,8 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun Greeting(shareText: String) {
+    Text(text = shareText)
 }
 
 @Preview(showBackground = true)
